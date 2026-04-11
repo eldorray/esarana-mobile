@@ -6,6 +6,11 @@
     <title>{{ $title ?? 'eSarana' }} — Precision Architect</title>
     <meta name="description" content="Sistem Manajemen Sarana & Prasarana">
     <meta name="theme-color" content="#1a56db">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="eSarana">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
 
     {{-- Google Fonts & Material Symbols --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -42,9 +47,23 @@
                 <a href="{{ route('cari') }}" wire:navigate class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-surface-container-high transition-all duration-200 active:scale-95 {{ $currentRoute === 'cari' ? 'bg-primary-10' : '' }}">
                     <span class="material-symbols-outlined {{ $currentRoute === 'cari' ? 'text-primary' : 'text-on-surface-variant' }} text-[22px]">search</span>
                 </a>
-                <button class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-surface-container-high transition-all duration-200 relative active:scale-95">
-                    <span class="material-symbols-outlined text-on-surface-variant text-[22px]">notifications</span>
-                    <span class="absolute top-2 right-2 w-2.5 h-2.5 bg-tertiary rounded-full ring-2 ring-white"></span>
+                <button x-data
+                        @click="$store('notif').open = !$store('notif').open"
+                        :class="$store('notif').open ? 'bg-primary-10' : ''"
+                        class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-surface-container-high transition-all duration-200 relative active:scale-95">
+                    <span class="material-symbols-outlined text-[22px]"
+                          :class="$store('notif').open ? 'text-primary' : 'text-on-surface-variant'"
+                          style="{{ "font-variation-settings: 'FILL' 0;" }}">notifications</span>
+                    @php
+                        $notifCount = \App\Models\Peminjaman::where('status','aktif')->whereDate('tanggal_kembali_rencana','<',today())->count()
+                            + \App\Models\Laporan::where('status','baru')->count()
+                            + \App\Models\BahanHabisPakai::whereColumn('stok','<=','stok_minimum')->count();
+                    @endphp
+                    @if($notifCount > 0)
+                    <span class="absolute top-1.5 right-1.5 min-w-[16px] h-4 px-1 bg-error text-white text-[9px] font-bold rounded-full ring-2 ring-surface flex items-center justify-center">
+                        {{ $notifCount > 9 ? '9+' : $notifCount }}
+                    </span>
+                    @endif
                 </button>
                 {{-- User Avatar --}}
                 <a href="#user-section" class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-white text-xs font-bold ml-1 active:scale-95 transition-transform">
@@ -94,9 +113,141 @@
         </div>
     </nav>
 
+    {{-- Notification Panel (inline — no Livewire wrapper to avoid Alpine scope isolation) --}}
+    @php
+        $notifUser    = auth()->user();
+        $notifIsStaff = $notifUser?->hasRole('staff') ?? false;
+        $notifItems   = collect();
+
+        // 1. Peminjaman terlambat
+        $overdueQ = \App\Models\Peminjaman::with(['inventaris','user'])
+            ->where('status','aktif')
+            ->whereDate('tanggal_kembali_rencana','<',today());
+        if ($notifIsStaff) $overdueQ->where('user_id', $notifUser->id);
+        foreach ($overdueQ->latest('tanggal_kembali_rencana')->take(5)->get() as $p) {
+            $days = today()->diffInDays($p->tanggal_kembali_rencana);
+            $notifItems->push([
+                'type'  => 'overdue',
+                'icon'  => 'schedule',
+                'color' => 'error',
+                'bg'    => 'bg-danger-light',
+                'title' => $p->inventaris?->nama ?? 'Aset',
+                'body'  => 'Terlambat '.$days.' hari • '.($p->user?->name ?? '—'),
+                'link'  => route('peminjaman.index'),
+                'time'  => $p->tanggal_kembali_rencana->diffForHumans(),
+            ]);
+        }
+
+        // 2. Laporan baru
+        $laporanQ = \App\Models\Laporan::where('status','baru');
+        if ($notifIsStaff) $laporanQ->where('user_id', $notifUser->id);
+        foreach ($laporanQ->latest()->take(5)->get() as $l) {
+            $notifItems->push([
+                'type'  => 'laporan',
+                'icon'  => 'report',
+                'color' => 'tertiary',
+                'bg'    => 'bg-tertiary-10',
+                'title' => $l->aset_lokasi,
+                'body'  => ucfirst($l->tipe).' • '.$l->pelapor_name,
+                'link'  => route('laporan.show', $l),
+                'time'  => $l->created_at->diffForHumans(),
+            ]);
+        }
+
+        // 3. Stok kritis
+        foreach (\App\Models\BahanHabisPakai::whereColumn('stok','<=','stok_minimum')->take(5)->get() as $b) {
+            $notifItems->push([
+                'type'  => 'stok',
+                'icon'  => 'warning',
+                'color' => 'tertiary',
+                'bg'    => 'bg-tertiary-10',
+                'title' => $b->nama,
+                'body'  => 'Stok '.$b->stok.' '.$b->satuan.' (min '.$b->stok_minimum.')',
+                'link'  => route('inventaris.bahan.show', $b),
+                'time'  => 'Kritis',
+            ]);
+        }
+
+        $notifItems = $notifItems->sortBy(fn($i) => match($i['type']) {
+            'overdue' => 0, 'laporan' => 1, default => 2,
+        })->values();
+    @endphp
+
+    {{-- Panel --}}
+    <div x-data
+         x-show="$store('notif').open"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 -translate-y-2"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100 translate-y-0"
+         x-transition:leave-end="opacity-0 -translate-y-2"
+         x-cloak
+         class="fixed top-[3.75rem] left-0 right-0 z-50 max-w-lg mx-auto px-3">
+        <div class="bg-surface rounded-2xl shadow-2xl border border-surface-container-high overflow-hidden">
+            <div class="flex items-center justify-between px-4 py-3.5 border-b border-surface-container-high">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-on-surface text-[20px]">notifications</span>
+                    <h3 class="text-sm font-extrabold text-on-surface font-headline">Notifikasi</h3>
+                    @if($notifItems->isNotEmpty())
+                    <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-error text-white text-[10px] font-bold">{{ $notifItems->count() }}</span>
+                    @endif
+                </div>
+                <button @click="$store('notif').open = false"
+                        class="icon-container-sm bg-surface-container-high active:scale-90 transition-transform">
+                    <span class="material-symbols-outlined text-on-surface-variant text-lg">close</span>
+                </button>
+            </div>
+            <div class="divide-y divide-surface-container-high max-h-[70vh] overflow-y-auto">
+                @forelse($notifItems as $item)
+                <a href="{{ $item['link'] }}" wire:navigate
+                   @click="$store('notif').open = false"
+                   class="flex items-start gap-3 px-4 py-3.5 active:bg-surface-container-low transition-colors block">
+                    <div class="icon-container-sm {{ $item['bg'] }} shrink-0 mt-0.5">
+                        <span class="material-symbols-outlined text-{{ $item['color'] }} text-[16px]"
+                              style="font-variation-settings: 'FILL' 1;">{{ $item['icon'] }}</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-semibold text-on-surface truncate">{{ $item['title'] }}</p>
+                        <p class="text-[11px] text-on-surface-variant mt-0.5">{{ $item['body'] }}</p>
+                    </div>
+                    <span class="text-[10px] text-on-surface-variant shrink-0 mt-0.5 whitespace-nowrap">{{ $item['time'] }}</span>
+                </a>
+                @empty
+                <div class="flex flex-col items-center justify-center py-10 text-on-surface-variant gap-2">
+                    <span class="material-symbols-outlined text-3xl opacity-30">notifications_off</span>
+                    <p class="text-sm font-medium">Semua beres!</p>
+                </div>
+                @endforelse
+            </div>
+        </div>
+    </div>
+
+    {{-- Backdrop --}}
+    <div x-data
+         x-show="$store('notif').open"
+         x-cloak
+         x-transition:enter="transition ease-out duration-150"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-100"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         @click="$store('notif').open = false"
+         class="fixed inset-0 z-40 bg-black/20 backdrop-blur-[2px]">
+    </div>
+
     {{-- Confirmation Modal --}}
     <x-confirm-modal />
 
     @livewireScripts
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('notif', { open: false });
+        });
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') Alpine.store('notif').open = false;
+        });
+    </script>
 </body>
 </html>

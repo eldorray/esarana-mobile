@@ -6,6 +6,11 @@
     <title>{{ $title ?? 'eSarana' }}</title>
     <meta name="description" content="Sistem Manajemen Sarana & Prasarana">
     <meta name="theme-color" content="#1a56db">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="eSarana">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
 
     {{-- Google Fonts & Material Symbols --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">

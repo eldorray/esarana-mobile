@@ -74,7 +74,8 @@
 
     {{-- Audit Log --}}
     <section class="mb-6">
-        <div class="hero-gradient rounded-2xl p-5 text-white flex items-center gap-4">
+        <a href="{{ route('master.audit-log') }}" wire:navigate
+           class="hero-gradient rounded-2xl p-5 text-white flex items-center gap-4 block active:scale-[0.98] transition-transform">
             <div class="relative z-10 flex items-center gap-4 w-full">
                 <div class="icon-container bg-white/10 backdrop-blur-sm">
                     <span class="material-symbols-outlined text-xl">description</span>
@@ -83,9 +84,13 @@
                     <p class="text-sm font-bold">Audit Log</p>
                     <p class="text-xs text-white/70 mt-0.5">Pantau semua perubahan master data.</p>
                 </div>
-                <span class="material-symbols-outlined text-white/50">chevron_right</span>
+                @php $totalLogs = \App\Models\AuditLog::count(); @endphp
+                @if($totalLogs > 0)
+                <span class="text-xs font-bold bg-white/20 px-2.5 py-1 rounded-full">{{ $totalLogs }}</span>
+                @endif
+                <span class="material-symbols-outlined text-white/70">chevron_right</span>
             </div>
-        </div>
+        </a>
     </section>
 
     {{-- User Profile & Logout --}}

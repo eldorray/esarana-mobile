@@ -26,13 +26,13 @@
 
     <div class="space-y-2.5 stagger-children">
         @forelse($bahans as $bahan)
-        <div class="card-elevated p-4">
+        <a href="{{ route('bahan.show', $bahan) }}" wire:navigate class="card-elevated p-4 block active:scale-[0.98] transition-transform">
             <div class="flex justify-between items-start">
-                <div class="flex-1">
+                <div class="flex-1 min-w-0 pr-3">
                     <h3 class="text-sm font-bold text-on-surface">{{ $bahan->nama }}</h3>
                     <p class="text-[11px] text-on-surface-variant mt-0.5">{{ $bahan->kode }} • {{ $bahan->kategori?->nama ?? 'Umum' }}</p>
                 </div>
-                <div class="text-right">
+                <div class="text-right shrink-0">
                     <span class="text-xl font-extrabold font-headline {{ $bahan->isStokRendah() ? 'text-tertiary' : 'text-on-surface' }}">{{ $bahan->stok }}</span>
                     <span class="text-[10px] text-on-surface-variant block uppercase">{{ $bahan->satuan }}</span>
                 </div>
@@ -47,7 +47,7 @@
                 <span class="text-[11px] font-bold">Min: {{ $bahan->stok_minimum }} {{ $bahan->satuan }}</span>
             </div>
             @endif
-        </div>
+        </a>
         @empty
         <div class="text-center py-16 text-on-surface-variant">
             <div class="icon-container-lg bg-surface-container-high mx-auto mb-3">

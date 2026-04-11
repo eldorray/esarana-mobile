@@ -27,7 +27,11 @@ class LokasiShow extends Component
 
     public function mount(Lokasi $lokasi)
     {
-        $this->lokasi = $lokasi->load('ruangans');
+        $this->lokasi = $lokasi->load([
+            'ruangans',
+            'ruangans.inventaris',
+            'ruangans.bahanHabisPakais',
+        ]);
         $this->nama = $lokasi->nama;
         $this->alamat = $lokasi->alamat ?? '';
         $this->tipe = $lokasi->tipe;
@@ -108,13 +112,13 @@ class LokasiShow extends Component
 
         $this->showRuanganForm = false;
         $this->resetRuanganForm();
-        $this->lokasi->load('ruangans');
+        $this->lokasi->load(['ruangans', 'ruangans.inventaris', 'ruangans.bahanHabisPakais']);
     }
 
     public function deleteRuangan(int $id)
     {
         Ruangan::findOrFail($id)->delete();
-        $this->lokasi->load('ruangans');
+        $this->lokasi->load(['ruangans', 'ruangans.inventaris', 'ruangans.bahanHabisPakais']);
     }
 
     private function resetRuanganForm()

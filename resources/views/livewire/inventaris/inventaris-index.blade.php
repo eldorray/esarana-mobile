@@ -9,9 +9,9 @@
         <button wire:click="$set('tab', 'aset')" class="chip {{ $tab === 'aset' ? 'chip-active' : '' }}">
             <span class="material-symbols-outlined text-[16px]">inventory_2</span> Aset Tetap
         </button>
-        <button wire:click="$set('tab', 'bahan')" class="chip {{ $tab === 'bahan' ? 'chip-active' : '' }}">
+        <a href="{{ route('inventaris.bahan.index') }}" wire:navigate class="chip {{ $tab === 'bahan' ? 'chip-active' : '' }}">
             <span class="material-symbols-outlined text-[16px]">science</span> Bahan Habis Pakai
-        </button>
+        </a>
     </div>
 
     {{-- Search --}}
@@ -86,37 +86,6 @@
                 <span class="material-symbols-outlined text-2xl opacity-40">inventory_2</span>
             </div>
             <p class="text-sm font-medium">Belum ada aset terdaftar</p>
-        </div>
-        @endforelse
-    </div>
-    @else
-    {{-- Bahan Habis Pakai List --}}
-    <div class="space-y-2.5 stagger-children">
-        @forelse($bahanHabisPakai as $bahan)
-        <div class="card-elevated p-4">
-            <div class="flex justify-between items-start">
-                <div>
-                    <h3 class="text-sm font-bold text-on-surface">{{ $bahan->nama }}</h3>
-                    <p class="text-[11px] text-on-surface-variant mt-0.5">{{ $bahan->kode }} • {{ $bahan->satuan }}</p>
-                </div>
-                <div class="text-right">
-                    <span class="text-xl font-extrabold font-headline {{ $bahan->isStokRendah() ? 'text-tertiary' : 'text-on-surface' }}">{{ $bahan->stok }}</span>
-                    <span class="text-[10px] text-on-surface-variant block uppercase">{{ $bahan->satuan }}</span>
-                </div>
-            </div>
-            @if($bahan->isStokRendah())
-            <div class="mt-2.5 flex items-center gap-1.5 text-tertiary bg-tertiary-10 px-3 py-1.5 rounded-lg">
-                <span class="material-symbols-outlined text-sm">warning</span>
-                <span class="text-[11px] font-semibold">Stok di bawah minimum ({{ $bahan->stok_minimum }})</span>
-            </div>
-            @endif
-        </div>
-        @empty
-        <div class="text-center py-16 text-on-surface-variant">
-            <div class="icon-container-lg bg-surface-container-high mx-auto mb-3">
-                <span class="material-symbols-outlined text-2xl opacity-40">science</span>
-            </div>
-            <p class="text-sm font-medium">Belum ada bahan habis pakai</p>
         </div>
         @endforelse
     </div>

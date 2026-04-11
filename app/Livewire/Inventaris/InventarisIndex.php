@@ -3,7 +3,6 @@
 namespace App\Livewire\Inventaris;
 
 use App\Models\Inventaris;
-use App\Models\BahanHabisPakai;
 use Livewire\Component;
 
 class InventarisIndex extends Component
@@ -14,14 +13,9 @@ class InventarisIndex extends Component
 
     public function render()
     {
-        $inventaris = Inventaris::with(['kategori', 'ruangan'])
+        $inventaris = Inventaris::with(['kategori', 'ruangan.lokasi'])
             ->when($this->search, fn($q) => $q->where('nama', 'like', "%{$this->search}%"))
             ->when($this->filter, fn($q) => $q->where('status', $this->filter))
-            ->latest()
-            ->get();
-
-        $bahanHabisPakai = BahanHabisPakai::with(['kategori', 'ruangan'])
-            ->when($this->search, fn($q) => $q->where('nama', 'like', "%{$this->search}%"))
             ->latest()
             ->get();
 
@@ -29,7 +23,7 @@ class InventarisIndex extends Component
         $perluMaintenance = Inventaris::where('status', 'maintenance')->count();
 
         return view('livewire.inventaris.inventaris-index', compact(
-            'inventaris', 'bahanHabisPakai', 'totalAset', 'perluMaintenance'
+            'inventaris', 'totalAset', 'perluMaintenance'
         ));
     }
 }

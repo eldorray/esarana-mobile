@@ -88,20 +88,31 @@
     </section>
 
     {{-- Info Cards --}}
-    <div class="grid grid-cols-2 gap-3 mb-6">
-        <div class="card-elevated p-4 text-center">
+    <div class="grid grid-cols-3 gap-3 mb-6">
+        <div class="card-elevated p-3.5 text-center">
             <div class="icon-container bg-primary-10 mx-auto mb-2">
                 <span class="material-symbols-outlined text-primary text-xl">meeting_room</span>
             </div>
             <div class="text-2xl font-extrabold text-on-surface font-headline">{{ $lokasi->ruangans->count() }}</div>
             <p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-wider mt-0.5">Ruangan</p>
         </div>
-        <div class="card-elevated p-4 text-center">
-            <div class="icon-container bg-secondary-10 mx-auto mb-2">
-                <span class="material-symbols-outlined text-secondary text-xl" style="font-variation-settings: 'FILL' 1;">location_on</span>
+        <div class="card-elevated p-3.5 text-center">
+            <div class="icon-container bg-success-light mx-auto mb-2">
+                <span class="material-symbols-outlined text-success text-xl">inventory_2</span>
             </div>
-            <div class="text-sm font-bold text-on-surface uppercase">{{ $lokasi->tipe }}</div>
-            <p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-wider mt-0.5">Tipe Lokasi</p>
+            <div class="text-2xl font-extrabold text-on-surface font-headline">
+                {{ $lokasi->ruangans->sum(fn($r) => $r->inventaris->count()) }}
+            </div>
+            <p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-wider mt-0.5">Aset</p>
+        </div>
+        <div class="card-elevated p-3.5 text-center">
+            <div class="icon-container bg-tertiary-10 mx-auto mb-2">
+                <span class="material-symbols-outlined text-tertiary text-xl">science</span>
+            </div>
+            <div class="text-2xl font-extrabold text-on-surface font-headline">
+                {{ $lokasi->ruangans->sum(fn($r) => $r->bahanHabisPakais->count()) }}
+            </div>
+            <p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-wider mt-0.5">Bahan</p>
         </div>
     </div>
 
@@ -154,46 +165,52 @@
         {{-- Ruangan List --}}
         <div class="space-y-2.5 stagger-children">
             @forelse($lokasi->ruangans as $ruangan)
-            <div class="card-elevated p-4">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3 flex-1 min-w-0">
-                        <div class="icon-container bg-primary-10">
-                            <span class="material-symbols-outlined text-primary text-xl">meeting_room</span>
-                        </div>
-                        <div class="min-w-0">
-                            <p class="font-semibold text-on-surface text-sm truncate">{{ $ruangan->nama }}</p>
-                            <p class="text-[11px] text-on-surface-variant mt-0.5">
-                                Lantai {{ $ruangan->lantai ?? '-' }} • Kapasitas {{ $ruangan->kapasitas ?? '-' }}
-                            </p>
-                        </div>
+            <div class="card-elevated overflow-hidden" wire:key="ruangan-{{ $ruangan->id }}">
+                {{-- Clickable row --}}
+                <a href="{{ route('ruangan.show', [$lokasi, $ruangan]) }}" wire:navigate
+                   class="p-4 flex items-center gap-3 block active:bg-surface-container-low transition-colors">
+                    <div class="icon-container bg-primary-10 shrink-0">
+                        <span class="material-symbols-outlined text-primary text-xl">meeting_room</span>
                     </div>
-                    <div class="flex items-center gap-1 shrink-0">
+                    <div class="flex-1 min-w-0">
+                        <p class="font-semibold text-on-surface text-sm truncate">{{ $ruangan->nama }}</p>
+                        <p class="text-[11px] text-on-surface-variant mt-0.5">
+                            Lantai {{ $ruangan->lantai ?? '—' }}
+                            @if($ruangan->kapasitas) • {{ $ruangan->kapasitas }} orang @endif
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
                         @if($ruangan->status === 'aktif')
                         <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-success-light text-success">Aktif</span>
                         @else
                         <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider bg-warning-light text-warning-amber">Nonaktif</span>
                         @endif
-
-                        @role('administrator')
-                        <button wire:click="openRuanganForm({{ $ruangan->id }})" class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-surface-container-high transition-colors active:scale-90">
-                            <span class="material-symbols-outlined text-[18px] text-on-surface-variant">edit</span>
-                        </button>
-                        <button
-                            x-on:click="$dispatch('confirm-modal', {
-                                title: 'Hapus Ruangan?',
-                                message: 'Ruangan {{ $ruangan->nama }} akan dihapus secara permanen.',
-                                icon: 'meeting_room',
-                                iconColor: 'error',
-                                confirmText: 'Ya, Hapus',
-                                confirmColor: 'error',
-                                action: () => $wire.deleteRuangan({{ $ruangan->id }})
-                            })"
-                            class="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-error-container transition-colors active:scale-90">
-                            <span class="material-symbols-outlined text-[18px] text-error">delete</span>
-                        </button>
-                        @endrole
+                        <span class="material-symbols-outlined text-on-surface-variant text-lg">chevron_right</span>
                     </div>
+                </a>
+
+                {{-- Admin actions — outside the link --}}
+                @role('administrator')
+                <div class="flex gap-2 px-4 pb-3 border-t border-surface-container-high pt-2">
+                    <button wire:click="openRuanganForm({{ $ruangan->id }})"
+                            class="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-primary-10 text-primary text-xs font-bold active:scale-95 transition-transform">
+                        <span class="material-symbols-outlined text-[15px]">edit</span> Edit
+                    </button>
+                    <button
+                        x-on:click="$dispatch('confirm-modal', {
+                            title: 'Hapus Ruangan?',
+                            message: 'Ruangan {{ addslashes($ruangan->nama) }} akan dihapus secara permanen.',
+                            icon: 'meeting_room',
+                            iconColor: 'error',
+                            confirmText: 'Ya, Hapus',
+                            confirmColor: 'error',
+                            action: () => $wire.deleteRuangan({{ $ruangan->id }})
+                        })"
+                        class="flex items-center justify-center gap-1 px-4 py-2 rounded-xl bg-danger-light text-error text-xs font-bold active:scale-95 transition-transform">
+                        <span class="material-symbols-outlined text-[15px]">delete</span>
+                    </button>
                 </div>
+                @endrole
             </div>
             @empty
             <div class="text-center py-12 text-on-surface-variant">
