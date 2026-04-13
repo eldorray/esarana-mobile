@@ -3,14 +3,17 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
-    <title>{{ $title ?? 'eSarana' }} — Precision Architect</title>
-    <meta name="description" content="Sistem Manajemen Sarana & Prasarana">
+    <title>{{ $title ?? 'e-SARPRAS' }}</title>
+    <meta name="description" content="Sistem Manajemen Sarana Prasarana Digital">
     <meta name="theme-color" content="#1a56db">
     <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-16.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="eSarana">
-    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <meta name="apple-mobile-web-app-title" content="e-SARPRAS">
+    <link rel="apple-touch-icon" href="/icons/icon-180.png">
 
     {{-- Google Fonts & Material Symbols --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
