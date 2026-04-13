@@ -64,7 +64,6 @@
                 {{-- Kembalikan Button --}}
                 <div class="mt-3 pt-3 border-t border-surface-container-high">
                     <button
-                        wire:click="kembalikan({{ $pinjam->id }})"
                         x-on:click="$dispatch('confirm-modal', {
                             title: 'Kembalikan Aset?',
                             message: 'Konfirmasi pengembalian {{ addslashes($pinjam->inventaris?->nama ?? 'aset ini') }}. Aset akan kembali tersedia.',
