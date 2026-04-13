@@ -31,11 +31,23 @@
                         <span class="material-symbols-outlined text-4xl text-on-surface-variant opacity-40">image</span>
                     </div>
                 @endif
-                <label class="cursor-pointer flex items-center gap-2 text-primary text-sm font-semibold">
-                    <span class="material-symbols-outlined text-lg">upload</span>
-                    {{ $inventaris->gambar ? 'Ganti Foto' : 'Upload Foto' }}
-                    <input wire:model="gambar" type="file" accept="image/*" class="hidden">
-                </label>
+                <div class="grid grid-cols-2 gap-2">
+                    <label class="cursor-pointer flex items-center justify-center gap-2 bg-primary text-white text-sm font-semibold rounded-xl px-4 py-2.5 active:scale-95 transition-transform">
+                        <span class="material-symbols-outlined text-lg">photo_camera</span>
+                        Kamera
+                        <input wire:model="gambar" type="file" accept="image/*" capture="environment" class="hidden">
+                    </label>
+                    <label class="cursor-pointer flex items-center justify-center gap-2 bg-surface-container-high text-on-surface text-sm font-semibold rounded-xl px-4 py-2.5 active:scale-95 transition-transform">
+                        <span class="material-symbols-outlined text-lg">photo_library</span>
+                        Galeri
+                        <input wire:model="gambar" type="file" accept="image/*" class="hidden">
+                    </label>
+                </div>
+                @if($gambar || $inventaris->gambar)
+                <button type="button" wire:click="$set('gambar', null)" class="mt-2 text-error text-xs font-semibold flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm">delete</span> Hapus Foto
+                </button>
+                @endif
                 @error('gambar') <span class="text-error text-xs mt-1 block">{{ $message }}</span> @enderror
             </div>
         </div>

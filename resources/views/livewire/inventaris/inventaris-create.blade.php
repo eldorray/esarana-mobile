@@ -44,15 +44,25 @@
                 <label class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider block mb-2">Foto Barang <span class="text-on-surface-variant font-normal normal-case">(opsional)</span></label>
                 @if($gambar)
                     <img src="{{ $gambar->temporaryUrl() }}" class="w-full h-44 object-cover rounded-2xl mb-2">
-                    <button type="button" wire:click="$set('gambar', null)" class="text-error text-xs font-semibold flex items-center gap-1">
+                    <button type="button" wire:click="$set('gambar', null)" class="text-error text-xs font-semibold flex items-center gap-1 mt-1">
                         <span class="material-symbols-outlined text-sm">delete</span> Hapus Foto
                     </button>
                 @else
-                    <label class="cursor-pointer flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-surface-container-highest rounded-2xl hover:border-primary transition-colors gap-2">
-                        <span class="material-symbols-outlined text-3xl text-on-surface-variant opacity-50">upload</span>
-                        <span class="text-xs text-on-surface-variant">Tap untuk upload foto</span>
-                        <input wire:model="gambar" type="file" accept="image/*" class="hidden">
-                    </label>
+                    <div class="w-full h-32 border-2 border-dashed border-surface-container-highest rounded-2xl flex items-center justify-center mb-2">
+                        <span class="material-symbols-outlined text-4xl text-on-surface-variant opacity-30">image</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="cursor-pointer flex items-center justify-center gap-2 bg-primary text-white text-sm font-semibold rounded-xl px-4 py-2.5 active:scale-95 transition-transform">
+                            <span class="material-symbols-outlined text-lg">photo_camera</span>
+                            Kamera
+                            <input wire:model="gambar" type="file" accept="image/*" capture="environment" class="hidden">
+                        </label>
+                        <label class="cursor-pointer flex items-center justify-center gap-2 bg-surface-container-high text-on-surface text-sm font-semibold rounded-xl px-4 py-2.5 active:scale-95 transition-transform">
+                            <span class="material-symbols-outlined text-lg">photo_library</span>
+                            Galeri
+                            <input wire:model="gambar" type="file" accept="image/*" class="hidden">
+                        </label>
+                    </div>
                 @endif
                 @error('gambar') <span class="text-error text-xs mt-1 block">{{ $message }}</span> @enderror
             </div>
