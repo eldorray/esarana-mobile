@@ -39,7 +39,7 @@
                 </div>
                 <div>
                     <p class="text-sm font-bold text-on-surface">Download Backup</p>
-                    <p class="text-xs text-on-surface-variant mt-0.5">Unduh seluruh database sebagai file <span class="font-mono">.sqlite</span> untuk disimpan secara manual.</p>
+                    <p class="text-xs text-on-surface-variant mt-0.5">Unduh seluruh database sebagai file <span class="font-mono">.sql</span> untuk disimpan secara manual.</p>
                 </div>
             </div>
             <button wire:click="downloadBackup"
@@ -63,7 +63,7 @@
                 </div>
                 <div>
                     <p class="text-sm font-bold text-on-surface">Upload File Backup</p>
-                    <p class="text-xs text-on-surface-variant mt-0.5">Pilih file <span class="font-mono">.sqlite</span> backup yang valid. Sistem akan otomatis menyimpan cadangan sebelum restore.</p>
+                    <p class="text-xs text-on-surface-variant mt-0.5">Pilih file <span class="font-mono">.sql</span> backup yang valid. Sistem akan otomatis menyimpan cadangan sebelum restore.</p>
                 </div>
             </div>
 
@@ -78,8 +78,8 @@
             @else
             <label class="cursor-pointer flex items-center justify-center gap-2 border-2 border-dashed border-surface-container-highest rounded-xl px-4 py-3 hover:border-secondary transition-colors">
                 <span class="material-symbols-outlined text-on-surface-variant text-xl">upload_file</span>
-                <span class="text-sm text-on-surface-variant">Tap untuk pilih file .sqlite</span>
-                <input wire:model="backupFile" type="file" accept=".sqlite,application/octet-stream" class="hidden">
+                <span class="text-sm text-on-surface-variant">Tap untuk pilih file .sql</span>
+                <input wire:model="backupFile" type="file" accept=".sql,text/plain,application/octet-stream" class="hidden">
             </label>
             @endif
             @error('backupFile') <p class="text-error text-xs">{{ $message }}</p> @enderror
