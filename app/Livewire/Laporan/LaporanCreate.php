@@ -4,13 +4,17 @@ namespace App\Livewire\Laporan;
 
 use App\Models\Laporan;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class LaporanCreate extends Component
 {
+    use WithFileUploads;
+
     public string $aset_lokasi = '';
     public string $tipe = 'kerusakan';
     public string $kategori_laporan = 'kerusakan';
     public string $deskripsi = '';
+    public $foto = null;
 
     public function save()
     {
@@ -18,7 +22,10 @@ class LaporanCreate extends Component
             'aset_lokasi' => 'required|min:3',
             'tipe' => 'required|in:kerusakan,permintaan',
             'deskripsi' => 'required|min:10',
+            'foto' => 'nullable|image|max:5120',
         ]);
+
+        $fotoPath = $this->foto ? $this->foto->store('laporan', 'public') : null;
 
         Laporan::create([
             'user_id' => auth()->id(),
@@ -26,6 +33,7 @@ class LaporanCreate extends Component
             'tipe' => $this->tipe,
             'kategori_laporan' => $this->tipe,
             'deskripsi' => $this->deskripsi,
+            'foto' => $fotoPath,
         ]);
 
         return $this->redirect(route('laporan.index'), navigate: true);
