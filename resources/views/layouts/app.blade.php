@@ -38,11 +38,11 @@
     <header class="topbar-glass fixed top-0 w-full z-40">
         <div class="flex justify-between items-center w-full px-5 py-3.5 max-w-lg mx-auto">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl overflow-hidden bg-gradient-to-br from-primary to-primary-container flex items-center justify-center shadow-sm">
-                    <span class="text-white font-bold text-xs font-headline tracking-wide">eS</span>
+                <div class="w-9 h-9 rounded-xl overflow-hidden shadow-sm shrink-0">
+                    <img src="/icons/icon-192.png" alt="e-SARPRAS" class="w-full h-full object-cover">
                 </div>
                 <div>
-                    <span class="text-base font-extrabold tracking-tight text-on-surface font-headline">eSarana</span>
+                    <span class="text-base font-extrabold tracking-tight text-on-surface font-headline">e-SARPRAS</span>
                     <span class="text-[10px] text-on-surface-variant block -mt-0.5 font-medium">{{ ucfirst($roleName) }}</span>
                 </div>
             </div>

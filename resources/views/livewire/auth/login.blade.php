@@ -16,7 +16,7 @@
             <span class="material-symbols-outlined text-primary text-xl">install_mobile</span>
         </div>
         <div class="flex-1 min-w-0">
-            <p class="text-sm font-bold text-on-surface">Pasang eSarana</p>
+            <p class="text-sm font-bold text-on-surface">Pasang e-SARPRAS</p>
             <p class="text-[11px] text-on-surface-variant">Akses cepat dari layar utama</p>
         </div>
         <button @click="install()" class="btn-primary px-4 py-2 text-xs font-bold shrink-0">Pasang</button>
@@ -48,11 +48,11 @@
 
     {{-- Brand --}}
     <div class="text-center mb-10">
-        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-primary-container flex items-center justify-center mx-auto mb-5 shadow-lg shadow-primary/20">
-            <span class="text-white font-extrabold text-2xl font-headline">eS</span>
+        <div class="w-20 h-20 rounded-2xl overflow-hidden mx-auto mb-4 shadow-lg shadow-primary/20">
+            <img src="/icons/icon-192.png" alt="e-SARPRAS" class="w-full h-full object-cover">
         </div>
-        <h1 class="text-2xl font-extrabold font-headline text-on-surface tracking-tight">Selamat Datang</h1>
-        <p class="text-on-surface-variant text-sm mt-1">Masuk ke akun eSarana Anda</p>
+        <h1 class="text-2xl font-extrabold font-headline text-on-surface tracking-tight">e-SARPRAS</h1>
+        <p class="text-on-surface-variant text-sm mt-1">Masuk ke akun Anda</p>
     </div>
 
     {{-- Login Form --}}
@@ -114,6 +114,6 @@
     </a>
 
     <p class="text-center text-[11px] text-on-surface-variant mt-8">
-        eSarana v1.0 — Precision Architect
+        e-SARPRAS — Sistem Manajemen Sarana Prasarana Digital
     </p>
 </div>
