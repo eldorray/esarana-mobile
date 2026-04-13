@@ -28,6 +28,7 @@ use App\Livewire\MasterData\KategoriIndex;
 use App\Livewire\MasterData\UserIndex;
 use App\Livewire\MasterData\RoleIndex;
 use App\Livewire\MasterData\AuditLogIndex;
+use App\Livewire\MasterData\BackupRestore;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -99,5 +100,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/master-data/users', UserIndex::class)->name('master.users');
         Route::get('/master-data/roles', RoleIndex::class)->name('master.roles');
         Route::get('/master-data/audit-log', AuditLogIndex::class)->name('master.audit-log');
+        Route::get('/master-data/backup', BackupRestore::class)->name('master.backup');
     });
 });

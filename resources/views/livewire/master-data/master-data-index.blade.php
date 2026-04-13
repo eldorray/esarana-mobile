@@ -72,6 +72,31 @@
         </a>
     </section>
 
+    {{-- Backup & Restore --}}
+    <section class="mb-4">
+        <a href="{{ route('master.backup') }}" wire:navigate class="block card-elevated p-5 group active:scale-[0.98] transition-transform">
+            <div class="flex items-start justify-between mb-4">
+                <div class="icon-container-lg bg-error/10">
+                    <span class="material-symbols-outlined text-error text-2xl" style="font-variation-settings:'FILL' 1">database</span>
+                </div>
+                <span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary group-hover:translate-x-1 transition-all duration-300">arrow_forward</span>
+            </div>
+            <h3 class="text-base font-bold text-on-surface font-headline">Backup & Restore</h3>
+            <p class="text-sm text-on-surface-variant mt-1">Unduh cadangan database, restore dari backup, atau reset data operasional.</p>
+            <div class="flex gap-2 mt-4 flex-wrap">
+                <span class="flex items-center gap-1 text-[10px] font-bold bg-primary-10 text-primary px-2.5 py-1 rounded-full">
+                    <span class="material-symbols-outlined text-[12px]">download</span> Backup
+                </span>
+                <span class="flex items-center gap-1 text-[10px] font-bold bg-secondary-10 text-secondary px-2.5 py-1 rounded-full">
+                    <span class="material-symbols-outlined text-[12px]">restore</span> Restore
+                </span>
+                <span class="flex items-center gap-1 text-[10px] font-bold bg-danger-light text-error px-2.5 py-1 rounded-full">
+                    <span class="material-symbols-outlined text-[12px]">delete_forever</span> Reset
+                </span>
+            </div>
+        </a>
+    </section>
+
     {{-- Audit Log --}}
     <section class="mb-6">
         <a href="{{ route('master.audit-log') }}" wire:navigate
